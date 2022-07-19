@@ -4,7 +4,19 @@ import {
   getCurrentWalletConnected,
   mintNFT,
 } from "./utils/interact.js";
+
+import DynamicDataTable from "@langleyfoxall/react-dynamic-data-table";
+
 const Minter = (props) => {
+  //for testing
+  const [data, setData] = useState([
+    {
+      id: 1,
+      token: "1234567890",
+      owner: "0987654321",
+    },
+  ]);
+
   //State variables
   const [walletAddress, setWallet] = useState("");
   const [status, setStatus] = useState("");
@@ -35,13 +47,26 @@ const Minter = (props) => {
       );
     }
   }
+
   useEffect(async () => {
     const { address, status } = await getCurrentWalletConnected();
     setWallet(address);
     setStatus(status);
     addWalletListener();
   }, []);
+  function dataButtonPressed() {
+    // let newData = data.slice();
+    let newData = [...data];
+    console.log(newData);
 
+    newData.push({
+      id: newData.length + 1,
+      token: "1234567890",
+      owner: "0987654321",
+    });
+
+    setData(newData);
+  }
   const connectWalletPressed = async () => {
     const walletResponse = await connectWallet();
     setStatus(walletResponse.status);
@@ -95,6 +120,26 @@ const Minter = (props) => {
         Mint NFT
       </button>
       <p id="status">{status}</p>
+      <button id="fetchData" onClick={dataButtonPressed}>
+        Fetch Data
+      </button>
+      {/* <table>
+        <thead>
+          <tr>
+            <th>Token ID</th>
+            <th>Owner</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((item) => (
+            <tr key={item.id}>
+              <td>{item.token}</td>
+              <td>{item.owner}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table> */}
+      <DynamicDataTable rows={data} />
     </div>
   );
 };
